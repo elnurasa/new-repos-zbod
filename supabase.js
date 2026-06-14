@@ -29,13 +29,13 @@ if (hasCredentials && typeof window !== 'undefined') {
 
 // Track which tables are connected
 const sbConnected = {
-  workshops: supabaseAvailable,
-  functions: supabaseAvailable,
-  workshop_functions: supabaseAvailable,
-  as_is_functions: supabaseAvailable,
-  divisions: supabaseAvailable,
-  asIs: supabaseAvailable,
-  comparisons: supabaseAvailable,
+  workshops: true,
+  functions: true,
+  workshop_functions: true,
+  as_is_functions: true,
+  divisions: true,
+  asIs: true,
+  comparisons: true,
 };
 
 function setSbConnected(table, val) { sbConnected[table] = val; }
