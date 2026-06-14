@@ -30,9 +30,10 @@ if (hasCredentials && typeof window !== 'undefined') {
 
 // Track which tables are connected
 const sbConnected = {
-  divisions: supabaseAvailable,
+  const sbConnected = {
   workshops: supabaseAvailable,
   functions: supabaseAvailable,
+  workshop_functions: supabaseAvailable,
   asIs: supabaseAvailable,
   comparisons: supabaseAvailable,
 };
