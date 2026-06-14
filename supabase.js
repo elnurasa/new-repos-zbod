@@ -1,7 +1,7 @@
 // Supabase Client Configuration
 // Replace these placeholder values with your actual Supabase project credentials
 const SUPABASE_URL = 'https://gngbxgiggtbnlffvzkzy.supabase.co';
-const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...';
+const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImduZ2J4Z2lnZ3RibmxmZnZ6a3p5Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODE0MjA0MTMsImV4cCI6MjA5Njk5NjQxM30.auSMefnT6uqJmxhIwUgpxeEUhWCJaMEC10QIGdtUSqE';
 
 // Check if credentials are configured
 const hasCredentials = SUPABASE_URL.includes('your-project') === false &&
