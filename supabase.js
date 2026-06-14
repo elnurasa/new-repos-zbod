@@ -32,6 +32,8 @@ const sbConnected = {
   workshops: supabaseAvailable,
   functions: supabaseAvailable,
   workshop_functions: supabaseAvailable,
+  as_is_functions: supabaseAvailable,
+  divisions: supabaseAvailable,
   asIs: supabaseAvailable,
   comparisons: supabaseAvailable,
 };
