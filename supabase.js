@@ -1,30 +1,22 @@
 // Supabase Client Configuration
-// Replace these placeholder values with your actual Supabase project credentials
 const SUPABASE_URL = 'https://gngbxgiggtbnlffvzkzy.supabase.co';
 const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImduZ2J4Z2lnZ3RibmxmZnZ6a3p5Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODE0MjA0MTMsImV4cCI6MjA5Njk5NjQxM30.auSMefnT6uqJmxhIwUgpxeEUhWCJaMEC10QIGdtUSqE';
-// Check if credentials are configured
-const hasCredentials = true;
 
 let supabase = null;
 let supabaseAvailable = false;
 
-if (hasCredentials && typeof window !== 'undefined') {
+if (typeof window !== 'undefined') {
   try {
-    // Load Supabase from CDN if available
     if (typeof window.supabase !== 'undefined' && window.supabase.createClient) {
       supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
       supabaseAvailable = true;
       console.log('Supabase connected');
     } else {
       console.warn('Supabase JS library not loaded. Using localStorage fallback.');
-      supabaseAvailable = false;
     }
   } catch (e) {
     console.warn('Supabase connection failed:', e);
-    supabaseAvailable = false;
   }
-} else {
-  console.log('Supabase credentials not configured. Using localStorage fallback for demo mode.');
 }
 
 // Track which tables are connected
@@ -36,6 +28,7 @@ const sbConnected = {
   divisions: true,
   asIs: true,
   comparisons: true,
+  landing_box_settings: true,
 };
 
 function setSbConnected(table, val) { sbConnected[table] = val; }
@@ -43,7 +36,7 @@ function isSbConnected(table) { return sbConnected[table] && supabaseAvailable; 
 
 // Safe Supabase query wrapper
 async function sbQuery(table, operation, ...args) {
-  if (!supabase || !sbConnected[table]) return { data: null, error: new Error('Supabase not available') };
+  if (!supabase) return { data: null, error: new Error('Supabase not available') };
   try {
     let query = supabase.from(table);
     if (operation === 'select') query = query.select(args[0] || '*');
@@ -66,7 +59,7 @@ async function sbQuery(table, operation, ...args) {
 // DIVISIONS CRUD
 // ═══════════════════════════════════════════
 async function sbLoadDivisions() {
-  if (!sb || !sb.supabaseAvailable) return null;
+  if (!supabase) return null;
   try {
     const { data, error } = await sbQuery('divisions', 'select', '*');
     if (error) throw error;
@@ -78,9 +71,8 @@ async function sbLoadDivisions() {
 }
 
 async function sbSaveDivision(division) {
-  if (!sb || !sb.supabaseAvailable) return false;
+  if (!supabase) return false;
   try {
-    // Try update first, then insert
     const { error: updateError } = await sbQuery('divisions', 'update', division, 'id', division.id);
     if (updateError) {
       const { error: insertError } = await sbQuery('divisions', 'insert', division);
@@ -94,7 +86,7 @@ async function sbSaveDivision(division) {
 }
 
 async function sbDeleteDivision(id) {
-  if (!sb || !sb.supabaseAvailable) return false;
+  if (!supabase) return false;
   try {
     const { error } = await sbQuery('divisions', 'delete', null, 'id', id);
     if (error) throw error;
@@ -109,7 +101,7 @@ async function sbDeleteDivision(id) {
 // WORKSHOPS CRUD
 // ═══════════════════════════════════════════
 async function sbLoadWorkshops() {
-  if (!sb || !sb.supabaseAvailable) return null;
+  if (!supabase) return null;
   try {
     const { data, error } = await sbQuery('workshops', 'select', '*');
     if (error) throw error;
@@ -121,7 +113,7 @@ async function sbLoadWorkshops() {
 }
 
 async function sbSaveWorkshop(workshop) {
-  if (!sb || !sb.supabaseAvailable) return false;
+  if (!supabase) return false;
   try {
     const { error: updateError } = await sbQuery('workshops', 'update', workshop, 'id', workshop.id);
     if (updateError) {
@@ -136,7 +128,7 @@ async function sbSaveWorkshop(workshop) {
 }
 
 async function sbDeleteWorkshop(id) {
-  if (!sb || !sb.supabaseAvailable) return false;
+  if (!supabase) return false;
   try {
     const { error } = await sbQuery('workshops', 'delete', null, 'id', id);
     if (error) throw error;
@@ -151,7 +143,7 @@ async function sbDeleteWorkshop(id) {
 // WORKSHOP FUNCTIONS CRUD
 // ═══════════════════════════════════════════
 async function sbLoadFunctions() {
-  if (!sb || !sb.supabaseAvailable) return null;
+  if (!supabase) return null;
   try {
     const { data, error } = await sbQuery('workshop_functions', 'select', '*');
     if (error) throw error;
@@ -163,7 +155,7 @@ async function sbLoadFunctions() {
 }
 
 async function sbSaveFunction(fn) {
-  if (!sb || !sb.supabaseAvailable) return false;
+  if (!supabase) return false;
   try {
     const { error: updateError } = await sbQuery('workshop_functions', 'update', fn, 'id', fn.id);
     if (updateError) {
@@ -178,7 +170,7 @@ async function sbSaveFunction(fn) {
 }
 
 async function sbDeleteFunction(id) {
-  if (!sb || !sb.supabaseAvailable) return false;
+  if (!supabase) return false;
   try {
     const { error } = await sbQuery('workshop_functions', 'delete', null, 'id', id);
     if (error) throw error;
@@ -193,7 +185,7 @@ async function sbDeleteFunction(id) {
 // AS-IS FUNCTIONS CRUD
 // ═══════════════════════════════════════════
 async function sbLoadAsIsFunctions() {
-  if (!sb || !sb.supabaseAvailable) return null;
+  if (!supabase) return null;
   try {
     const { data, error } = await sbQuery('as_is_functions', 'select', '*');
     if (error) throw error;
@@ -205,7 +197,7 @@ async function sbLoadAsIsFunctions() {
 }
 
 async function sbSaveAsIsFunction(fn) {
-  if (!sb || !sb.supabaseAvailable) return false;
+  if (!supabase) return false;
   try {
     const { error: updateError } = await sbQuery('as_is_functions', 'update', fn, 'id', fn.id);
     if (updateError) {
@@ -220,7 +212,7 @@ async function sbSaveAsIsFunction(fn) {
 }
 
 async function sbDeleteAsIsFunction(id) {
-  if (!sb || !sb.supabaseAvailable) return false;
+  if (!supabase) return false;
   try {
     const { error } = await sbQuery('as_is_functions', 'delete', null, 'id', id);
     if (error) throw error;
@@ -235,31 +227,19 @@ async function sbDeleteAsIsFunction(id) {
 // BULK SYNC OPERATIONS
 // ═══════════════════════════════════════════
 async function sbSyncAll(divisions, workshops, functions, asIsFns) {
-  if (!sb || !sb.supabaseAvailable) return false;
+  if (!supabase) return false;
   try {
-    // Sync divisions
     if (divisions && divisions.length > 0) {
-      for (const d of divisions) {
-        await sbSaveDivision(d);
-      }
+      for (const d of divisions) await sbSaveDivision(d);
     }
-    // Sync workshops
     if (workshops && workshops.length > 0) {
-      for (const w of workshops) {
-        await sbSaveWorkshop(w);
-      }
+      for (const w of workshops) await sbSaveWorkshop(w);
     }
-    // Sync functions
     if (functions && functions.length > 0) {
-      for (const f of functions) {
-        await sbSaveFunction(f);
-      }
+      for (const f of functions) await sbSaveFunction(f);
     }
-    // Sync AS-IS functions
     if (asIsFns && asIsFns.length > 0) {
-      for (const f of asIsFns) {
-        await sbSaveAsIsFunction(f);
-      }
+      for (const f of asIsFns) await sbSaveAsIsFunction(f);
     }
     return true;
   } catch (e) {
@@ -272,7 +252,7 @@ async function sbSyncAll(divisions, workshops, functions, asIsFns) {
 // LANDING BOX SETTINGS CRUD
 // ═══════════════════════════════════════════
 async function sbLoadLandingBoxes() {
-  if (!sb || !sb.supabaseAvailable) return null;
+  if (!supabase) return null;
   try {
     const { data, error } = await sbQuery('landing_box_settings', 'select', '*');
     if (error) throw error;
@@ -284,12 +264,11 @@ async function sbLoadLandingBoxes() {
 }
 
 async function sbSaveLandingBox(entry) {
-  if (!sb || !sb.supabaseAvailable) return false;
+  if (!supabase) return false;
   try {
-    // Upsert by box_id
-    const { error: delError } = await sb.supabase.from('landing_box_settings').delete().eq('box_id', entry.box_id);
+    const { error: delError } = await supabase.from('landing_box_settings').delete().eq('box_id', entry.box_id);
     if (delError) console.warn('delete warning:', delError);
-    const { error: insError } = await sb.supabase.from('landing_box_settings').insert(entry);
+    const { error: insError } = await supabase.from('landing_box_settings').insert(entry);
     if (insError) throw insError;
     return true;
   } catch (e) {
@@ -299,9 +278,9 @@ async function sbSaveLandingBox(entry) {
 }
 
 async function sbDeleteLandingBox(boxId) {
-  if (!sb || !sb.supabaseAvailable) return false;
+  if (!supabase) return false;
   try {
-    const { error } = await sb.supabase.from('landing_box_settings').delete().eq('box_id', boxId);
+    const { error } = await supabase.from('landing_box_settings').delete().eq('box_id', boxId);
     if (error) throw error;
     return true;
   } catch (e) {
@@ -314,7 +293,7 @@ async function sbDeleteLandingBox(boxId) {
 // LOAD ALL DATA FROM SUPABASE
 // ═══════════════════════════════════════════
 async function sbLoadAll() {
-  if (!sb || !sb.supabaseAvailable) return null;
+  if (!supabase) return null;
   try {
     const [divisions, workshops, functions, asIsFns] = await Promise.all([
       sbLoadDivisions(),
@@ -338,7 +317,6 @@ window.zbodSupabase = {
   setSbConnected,
   SUPABASE_URL,
   SUPABASE_ANON_KEY,
-  // Full CRUD
   sbLoadDivisions,
   sbSaveDivision,
   sbDeleteDivision,
@@ -353,7 +331,6 @@ window.zbodSupabase = {
   sbDeleteAsIsFunction,
   sbSyncAll,
   sbLoadAll,
-  // Landing box settings
   sbLoadLandingBoxes,
   sbSaveLandingBox,
   sbDeleteLandingBox,
